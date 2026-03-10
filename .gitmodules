@@ -1,0 +1,6 @@
+[submodule "flipapp"]
+	path = flipapp
+	url = http://git-inner.yunxuetang.com.cn/xxv2/xuanxing2-ms-flip/backend/flipapp.git
+[submodule "flipstu-pc"]
+	path = flipstu-pc
+	url = http://git-inner.yunxuetang.com.cn/xxv2/xuanxing2-ms-flip/frontend/flipstu-pc.git
