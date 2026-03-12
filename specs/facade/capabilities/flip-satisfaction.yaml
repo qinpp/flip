@@ -1,0 +1,83 @@
+# 面授满意度能力
+# 基础路径: /facade/flip
+# 所有接口 backward_compatible: true
+
+capabilities:
+
+  sync_satisfaction:
+    description: "同步面授满意度数据"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/sync/satisfaction
+    input:
+      body: FlipSatisfactionSyncReq
+    output:
+      success:
+        status: 200
+        schema: "void"
+
+  get_satisfaction_result:
+    description: "获取面授满意度结果（分页）"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/satisfaction/result
+    input:
+      body: FlipSatisfactionReq
+    output:
+      success:
+        status: 200
+        schema: "PagingList<FlipSatisfactionResultResp>"
+
+  check_has_satisfaction:
+    description: "检查面授是否有满意度数据"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/satisfaction/result/check
+    input:
+      body: FlipSatisfactionReq
+    output:
+      success:
+        status: 200
+        schema: "boolean"
+
+  export_satisfaction_result:
+    description: "导出面授满意度结果"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/satisfaction/result/export
+    input:
+      body: FlipSatisfactionReq
+    output:
+      success:
+        status: 200
+        schema: "Map<String, String>（导出文件URL等）"
+
+  get_instructors_by_flip_ids:
+    description: "批量查询讲师列表（满意度用）"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/getInstructors/flipIds
+    input:
+      body: FlipInsReq
+    output:
+      success:
+        status: 200
+        schema: "Map<Long, List<InstructorDetail4GetVo>>（flipId → 讲师列表）"
+
+  get_answer_url:
+    description: "获取答题详情地址"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/answerurl
+    input:
+      body: FlipSurvey4Get
+    output:
+      success:
+        status: 200
+        schema: "String（答题URL）"

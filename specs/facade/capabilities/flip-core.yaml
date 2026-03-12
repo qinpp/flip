@@ -1,0 +1,246 @@
+# 面授核心 CRUD 能力
+# 基础路径: /facade/flip
+# 所有接口 backward_compatible: true（有外部客户在使用）
+
+capabilities:
+
+  create_flip:
+    description: "创建面授课程"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/createFlipInfo
+    input:
+      body: Flip4CreateReq
+      required:
+        - field: flipName
+          type: String
+          description: "面授名称"
+        - field: orgId
+          type: String
+          description: "机构ID"
+    output:
+      success:
+        status: 200
+        schema: "Long（新建面授ID）"
+      errors:
+        - status: 400
+          reason: "参数校验失败"
+    side_effects:
+      - "创建面授记录，publishState=0（草稿）"
+
+  update_flip:
+    description: "修改面授信息"
+    backward_compatible: true
+    api:
+      method: PUT
+      path: /facade/flip/updateFlipInfo
+    input:
+      body: Flip4UpdateReq
+      required:
+        - field: id
+          type: Long
+          description: "面授ID"
+        - field: orgId
+          type: String
+          description: "机构ID"
+    output:
+      success:
+        status: 200
+        schema: "Long（面授ID）"
+
+  update_flip_batch:
+    description: "批量修改面授信息"
+    backward_compatible: true
+    api:
+      method: PUT
+      path: /facade/flip/updateFlipInfos
+    input:
+      body: "List<Flip4UpdateReq>"
+    output:
+      success:
+        status: 200
+        schema: "void"
+
+  delete_flip_by_id_org:
+    description: "按 flipId + orgId 删除面授"
+    backward_compatible: true
+    api:
+      method: DELETE
+      path: /facade/flip/{flipId}/{orgId}
+    input:
+      path_params:
+        - field: flipId
+          type: Long
+        - field: orgId
+          type: String
+    output:
+      success:
+        status: 200
+        schema: "boolean"
+
+  delete_flip_by_req:
+    description: "按请求体删除面授"
+    backward_compatible: true
+    api:
+      method: DELETE
+      path: /facade/flip/deleteFlipInfo
+    input:
+      body: FlipInfoReq
+    output:
+      success:
+        status: 200
+        schema: "boolean"
+
+  publish_flip:
+    description: "修改面授发布状态"
+    backward_compatible: true
+    api:
+      method: PUT
+      path: /facade/flip/{publishState}/{orgId}
+    input:
+      path_params:
+        - field: publishState
+          type: Integer
+          description: "目标发布状态（0=草稿 1=进行中 2=撤回 4=结束）"
+        - field: orgId
+          type: String
+      body: "List<Long>（flipIds）"
+    output:
+      success:
+        status: 200
+        schema: "boolean"
+
+  get_flip_detail_path:
+    description: "查询面授详情（路径参数方式）"
+    backward_compatible: true
+    api:
+      method: GET
+      path: /facade/flip/{id}/{orgId}
+    input:
+      path_params:
+        - field: id
+          type: Long
+        - field: orgId
+          type: String
+    output:
+      success:
+        status: 200
+        schema: "FlipDetailVo（含 id, flipName, publishState, orgId, instructors, enableAttend 等）"
+      errors:
+        - status: 404
+          reason: "面授不存在"
+
+  get_flip_detail_body:
+    description: "查询面授详情（请求体方式）"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/getFlipInfo
+    input:
+      body: FlipInfoReq
+    output:
+      success:
+        status: 200
+        schema: "FlipDetailVo"
+
+  release_verification:
+    description: "面授发布校验（检查是否满足发布条件）"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/releaseVerification
+    input:
+      body: FlipInfoPublishReq
+    output:
+      success:
+        status: 200
+        schema: "ResponseResult<List<Long>>（校验失败的 flipId 列表）"
+
+  copy_flip:
+    description: "新面授复制"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/copy
+    input:
+      body: FlipCopyReq
+    output:
+      success:
+        status: 200
+        schema: "Map<Long, Long>（源flipId → 新flipId 映射）"
+
+  old_copy_flip:
+    description: "旧面授复制（历史兼容）"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/oldCopy
+    input:
+      body: OldFlipCopyReq
+    output:
+      success:
+        status: 200
+        schema: "Map<Long, Long>"
+
+  check_instructor:
+    description: "检查是否是面授讲师"
+    backward_compatible: true
+    api:
+      method: GET
+      path: /facade/flip/checkIsFlipInstructor
+    input:
+      query_params:
+        - field: flipId
+          type: Long
+        - field: userId
+          type: String
+        - field: orgId
+          type: String
+    output:
+      success:
+        status: 200
+        schema: "boolean"
+
+  get_can_appraises:
+    description: "批量查询学员是否评价"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/getCanAppraises
+    input:
+      body: UserAppraiseReq
+    output:
+      success:
+        status: 200
+        schema: "Map<String, BigDecimal>（userId → 满意度分数）"
+
+  get_flip_peo_statistics:
+    description: "批量获取项目下面授完成人数和总人数统计"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/getFlipPeoStatistics
+    input:
+      body: FlipPeoStatByBizIdBatchReq
+    output:
+      success:
+        status: 200
+        schema: "List<FlipPeoStatByBizIdBatchRes>"
+
+  fetch_flip_status:
+    description: "查询面授状态"
+    backward_compatible: true
+    api:
+      method: GET
+      path: /facade/flip/fetch/status
+    input:
+      query_params:
+        - field: orgId
+          type: String
+        - field: flipId
+          type: Long
+    output:
+      success:
+        status: 200
+        schema: "FlipStatusOuterResp"

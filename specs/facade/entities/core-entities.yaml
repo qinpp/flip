@@ -1,0 +1,102 @@
+# 核心实体与状态定义
+# 外部消费者需理解这些实体状态才能正确调用 Facade 接口
+
+entities:
+
+  FlipDetail:
+    description: "面授课程主体实体"
+    table: flip_detail
+    key_attributes:
+      - name: id
+        type: Long
+        description: "面授唯一ID（雪花算法）"
+      - name: flipName
+        type: String
+        description: "面授名称"
+      - name: orgId
+        type: String
+        description: "所属机构ID"
+      - name: publishState
+        type: Integer
+        description: "发布状态（见下方状态机）"
+      - name: enableAttend
+        type: Integer
+        description: "是否开启考勤（0=否 1=是）"
+      - name: enableSignIn
+        type: Integer
+        description: "是否开启签到（0=否 1=是）"
+      - name: durationPushMode
+        type: Integer
+        description: "学时推送模式（0=即学即推 1=核实下发）"
+      - name: deleted
+        type: Integer
+        description: "逻辑删除（0=正常 1=已删除）"
+    states:
+      DRAFT:
+        value: 0
+        description: "草稿/未发布"
+        transitions: [ING, WITHDRAW]
+      ING:
+        value: 1
+        description: "进行中（已发布）"
+        transitions: [WITHDRAW, END]
+      WITHDRAW:
+        value: 2
+        description: "已撤回"
+        transitions: [ING]
+      DELETE:
+        value: 3
+        description: "已删除"
+        transitions: []
+      END:
+        value: 4
+        description: "已结束"
+        transitions: [PIGEONHOLE]
+      PIGEONHOLE:
+        value: 5
+        description: "已归档"
+        transitions: []
+    preconditions:
+      - "只有 DRAFT(0) 或 WITHDRAW(2) 状态的面授可以编辑"
+      - "只有 DRAFT(0) 可以删除"
+      - "发布需通过 releaseVerification 校验"
+
+  FlipScene:
+    description: "面授场次"
+    key_attributes:
+      - name: flipId
+        type: Long
+        description: "所属面授ID"
+    states:
+      BEFORE:
+        value: 0
+        description: "未开始"
+      START:
+        value: 1
+        description: "已开始"
+      END:
+        value: 2
+        description: "已结束"
+
+  FlipExternalUser:
+    description: "外部用户（非平台内用户参与面授）"
+    key_attributes:
+      - name: flipId
+        type: Long
+        description: "所属面授ID"
+      - name: orgId
+        type: String
+        description: "所属机构ID"
+      - name: userId
+        type: String
+        description: "外部用户ID"
+
+  FlipFinishFlag:
+    description: "面授完成标志"
+    states:
+      UNFINISHED:
+        value: 0
+        description: "未完成"
+      COMPLETED:
+        value: 1
+        description: "已完成"

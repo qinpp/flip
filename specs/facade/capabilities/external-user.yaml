@@ -1,0 +1,130 @@
+# 外部用户管理能力
+# 基础路径: /facade/flip
+# 所有接口 backward_compatible: true
+
+capabilities:
+
+  check_external_user_auth:
+    description: "校验外部用户是否具有面授访问权限"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/flipAuth/checkExternalUserAuth/{flipId}/{userId}/{orgId}
+    input:
+      path_params:
+        - field: flipId
+          type: Long
+        - field: userId
+          type: String
+        - field: orgId
+          type: String
+    output:
+      success:
+        status: 200
+        schema: "AuthResp（含权限验证结果）"
+
+  get_external_user_config:
+    description: "获取面授外部用户接入配置"
+    backward_compatible: true
+    api:
+      method: GET
+      path: /facade/flip/externalUserConfig/get/{flipId}/{orgId}
+    input:
+      path_params:
+        - field: flipId
+          type: Long
+        - field: orgId
+          type: String
+    output:
+      success:
+        status: 200
+        schema: "FlipExternalUserConfigVo"
+
+  save_or_update_external_user_config:
+    description: "保存或更新外部用户配置"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/externalUserConfig/saveOrUpdate
+    input:
+      body: FlipExternalUserConfigCreateDto
+    output:
+      success:
+        status: 200
+        schema: "Long（配置ID）"
+
+  list_external_users:
+    description: "分页查询外部用户列表"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/externalUser/listPage
+    input:
+      body: FlipExternalUserListDto
+      required:
+        - field: page
+          type: Integer
+        - field: pageSize
+          type: Integer
+    output:
+      success:
+        status: 200
+        schema: "PageInfo<FlipExternalUserVo>（含 total, list, pageNum, pageSize）"
+
+  delete_external_users_batch:
+    description: "批量删除外部用户"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/externalUser/deleteBatch
+    input:
+      body: FlipExternalUserDelBatchDto
+    output:
+      success:
+        status: 200
+        schema: "void"
+
+  delete_external_user:
+    description: "删除单条外部用户"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/externalUser/delete
+    input:
+      body: FlipExternalUserDelDto
+    output:
+      success:
+        status: 200
+        schema: "Long（删除记录ID）"
+
+  save_or_update_external_users_batch:
+    description: "批量新增或更新外部用户"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/externalUser/saveOrUpdateBatch
+    input:
+      body: "List<FlipExternalUserCreateDto>"
+    output:
+      success:
+        status: 200
+        schema: "String（\"OK\"）"
+
+  get_external_user:
+    description: "查询单个外部用户"
+    backward_compatible: true
+    api:
+      method: GET
+      path: /facade/flip/externalUser/get/{orgId}/{flipId}/{userId}
+    input:
+      path_params:
+        - field: orgId
+          type: String
+        - field: flipId
+          type: Long
+        - field: userId
+          type: String
+    output:
+      success:
+        status: 200
+        schema: "FlipExternalUserVo"

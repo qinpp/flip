@@ -1,0 +1,17 @@
+feature_id: F-010
+feature_name: 考勤
+status: stable
+adopt_mode: true
+phases:
+  define: done
+  stories: done
+  design_arch: done
+  design_domain: done
+  plan_tasks: pending
+  implement: done
+  verify: pending
+blockers: []
+history:
+  - date: "2026-03-11"
+    action: adopt
+    note: "存量项目接入，Phase 2 规格提取"

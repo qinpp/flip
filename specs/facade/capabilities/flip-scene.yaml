@@ -1,0 +1,70 @@
+# 面授场次能力
+# 基础路径: /facade/flip
+# 所有接口 backward_compatible: true
+
+capabilities:
+
+  get_flip_scene_state:
+    description: "获取面授场次状态"
+    backward_compatible: true
+    api:
+      method: GET
+      path: /facade/flip/getFlipSceneState/{id}/{orgId}
+    input:
+      path_params:
+        - field: id
+          type: Long
+          description: "面授ID"
+        - field: orgId
+          type: String
+    output:
+      success:
+        status: 200
+        schema: "FlipSceneStateVO（场次状态：0=未开始 1=已开始 2=已结束）"
+
+  get_start_flip_scenes:
+    description: "查询当前面授正在进行的场次"
+    backward_compatible: true
+    api:
+      method: GET
+      path: /facade/flip/getStartFlipScenes/{flipId}/{orgId}
+    input:
+      path_params:
+        - field: flipId
+          type: Long
+        - field: orgId
+          type: String
+    output:
+      success:
+        status: 200
+        schema: "List<StartFlipSceneVo>"
+
+  get_flip_scenes:
+    description: "面授场次详情列表"
+    backward_compatible: true
+    api:
+      method: POST
+      path: /facade/flip/getFlipScenes
+    input:
+      body: "（flipId + orgId 等查询参数）"
+    output:
+      success:
+        status: 200
+        schema: "List<FlipSceneVo>"
+
+  get_flip_info_for_attend_urge:
+    description: "查询独立面授信息（考勤大屏一键催促使用）"
+    backward_compatible: true
+    api:
+      method: GET
+      path: /facade/flip/getFlipInfoForAttendUrge
+    input:
+      query_params:
+        - field: flipId
+          type: Long
+        - field: orgId
+          type: String
+    output:
+      success:
+        status: 200
+        schema: "AttendUrgeFlipData"
